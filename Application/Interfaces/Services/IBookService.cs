@@ -2,7 +2,8 @@
 
 namespace NetCoreWebApi.Application.Interfaces.Services
 {
-    public interface IBookService : IService<BookDto>
+    public interface IBookService : IService<BookDto, CreateBookDto, UpdateBookDtoCommand, DeleteBookCommand>
+        
     {
     }
 }

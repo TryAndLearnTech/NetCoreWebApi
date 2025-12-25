@@ -3,22 +3,26 @@ using Microsoft.AspNetCore.Mvc;
 using NetCoreWebApi.Application.Dtos;
 using NetCoreWebApi.Application.Dtos.Book;
 using NetCoreWebApi.Application.Interfaces.Services;
+using NetCoreWebApi.Domain.Entities;
 
 namespace NetCoreWebApi.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class BookController : Controller
+    public class BookController : BaseController<BookDto, CreateBookDto, UpdateBookDtoCommand, DeleteBookCommand> //Controller
     {
-        private readonly IBookService _bookService;
-        private readonly IMapper _mapper;
-
-        public BookController(IBookService bookService, IMapper mapper)
+        public BookController(IBookService service) : base(service
+            // , service
+            )
         {
-            _bookService = bookService;
-            _mapper = mapper;
         }
 
+        //public BookController(IBookService bookService, IMapper mapper)
+        //{
+        //    _bookService = bookService;
+        //    _mapper = mapper;
+        //}
+        /*
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -60,6 +64,7 @@ namespace NetCoreWebApi.API.Controllers
             await _bookService.DeleteAsync(book.Id, cancellationToken).ConfigureAwait(false);
             return Ok();
         }
+        
 
         [HttpGet("query")]
         public async Task<IActionResult> GetBooks([FromQuery] QueryParameters queryParameters)
@@ -76,7 +81,7 @@ namespace NetCoreWebApi.API.Controllers
 
             return Ok(response);
         }
-
+       */
 
     }
 }

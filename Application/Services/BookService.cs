@@ -22,11 +22,6 @@ namespace NetCoreWebApi.Application.Services
             _mapper = mapper;
         }
 
-        public async Task DeleteAsync(int Id, CancellationToken cancellationToken)
-        {
-            await _bookRepository.DeleteAsync(Id, cancellationToken).ConfigureAwait(false);
-        }
-
         public async Task<IEnumerable<BookDto>> GetAllAsync()
         {
             var books = await _bookRepository.GetAllAsync();
@@ -62,6 +57,17 @@ namespace NetCoreWebApi.Application.Services
             var (books, totalCount) = await _bookRepository.GetPagedAsync(queryParameters).ConfigureAwait(false);
 
             return (_mapper.Map<IEnumerable<BookDto>>(books), totalCount);
+        }
+
+        public async Task CreateAsync<TDto>(TDto dto) where TDto : class
+        {
+            var book = _mapper.Map<Book>(dto);
+            await _bookRepository.AddAsync(book);
+        }
+
+        public async Task DeleteAsync(DeleteBookCommand command, CancellationToken cancellationToken)
+        {
+            await _bookRepository.DeleteAsync(command.Id, cancellationToken).ConfigureAwait(false);
         }
     }
 }

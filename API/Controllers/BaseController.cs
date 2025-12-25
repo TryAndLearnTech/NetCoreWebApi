@@ -1,33 +1,56 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using NetCoreWebApi.Application.Interfaces.Services;
-using NetCoreWebApi.Application.Services;
 
 namespace NetCoreWebApi.API.Controllers
 {
-    public class BaseController<T> : ControllerBase where T : class
+    [ApiController]
+    [Route("api/[controller]")]
+    public abstract class BaseController<TDto, TCreateDto, TUpdateDto, TDeleteCommand> : ControllerBase
+    where TCreateDto : class
+    where TDto : class
     {
-        private readonly IService<T> _service;
-        private readonly IMapper _mapper;
+        protected readonly IService<TDto, TCreateDto, TUpdateDto, TDeleteCommand> _createService;
+        // protected readonly IReadService<TDto> _readService;
 
-        public BaseController(IService<T> service, IMapper mapper)
+        protected BaseController(
+            IService<TDto, TCreateDto, TUpdateDto, TDeleteCommand> createService
+            // , IReadService<TDto> readService
+            )
         {
-            _service = service;
-            _mapper = mapper;
+            _createService = createService;
+            // _readService = readService;
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
-        {
-            var entities = await _service.GetAllAsync();
-            return Ok(entities);
-        }
+        public async Task<IActionResult> GetAll()
+            => Ok(await _createService.GetAllAsync());
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetBookById(int id, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetById(int id, CancellationToken ct)
+            => Ok(await _createService.GetByIdAsync(id, ct));
+
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] TCreateDto dto)
         {
-            var entity = await _service.GetByIdAsync(id, cancellationToken);
-            return Ok(entity);
+            await _createService.CreateAsync(dto);
+            return Ok();
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> Update(TUpdateDto command, CancellationToken cancellationToken)
+        {
+            if (command == null)
+                return BadRequest("Id mismatch");
+
+            var updatedBook = await _createService.UpdateAsync(command, cancellationToken).ConfigureAwait(false);
+            return Ok(updatedBook);
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> Delete(TDeleteCommand command, CancellationToken cancellationToken)
+        {
+            await _createService.DeleteAsync(command, cancellationToken).ConfigureAwait(false);
+            return Ok();
         }
     }
 }

@@ -3,13 +3,30 @@ using NetCoreWebApi.Application.Dtos.Book;
 
 namespace NetCoreWebApi.Application.Interfaces.Services
 {
-    public interface IService<T> where T : class
+    public interface IService <TDto, TCreateCommand, TUpdateCommand, TDeleteCommand>
     {
-        Task<IEnumerable<T>> GetAllAsync();
-        Task CreateAsync(CreateBookDto dto);
-        Task<T> GetByIdAsync(int id, CancellationToken cancellationToken);
-        Task<T> UpdateAsync(UpdateBookDtoCommand book, CancellationToken cancellationToken);
-        Task DeleteAsync(int id, CancellationToken cancellationToken);
-        Task<(IEnumerable<T> Data, int TotalCount)> GetPagedAsync(QueryParameters queryParameters);
+        Task CreateAsync(TCreateCommand command);
+        Task<TDto> UpdateAsync(TUpdateCommand command, CancellationToken cancellationToken);
+        Task DeleteAsync(TDeleteCommand command, CancellationToken cancellationToken);
+        Task<IEnumerable<TDto>> GetAllAsync();
+        Task<TDto> GetByIdAsync(int id, CancellationToken ct);
+        Task<(IEnumerable<TDto> Data, int TotalCount)> GetPagedAsync(QueryParameters queryParameters);
+
     }
+
+    /*
+    public interface ICreateService<TDto, TCreateCommand, TUpdateCommand, TDeleteCommand>
+
+    {
+        Task CreateAsync(TCreateCommand command);
+        Task<TDto> UpdateAsync(TUpdateCommand command, CancellationToken cancellationToken);
+        Task DeleteAsync(TDeleteCommand command, CancellationToken cancellationToken);
+        Task<IEnumerable<TDto>> GetAllAsync();
+        Task<TDto> GetByIdAsync(int id, CancellationToken ct);
+        Task<(IEnumerable<TDto> Data, int TotalCount)> GetPagedAsync(QueryParameters queryParameters);
+
+    }
+    */
+
+
 }
