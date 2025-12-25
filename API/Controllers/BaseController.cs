@@ -29,7 +29,5 @@ namespace NetCoreWebApi.API.Controllers
             var entity = await _service.GetByIdAsync(id, cancellationToken);
             return Ok(entity);
         }
-
-
     }
 }
